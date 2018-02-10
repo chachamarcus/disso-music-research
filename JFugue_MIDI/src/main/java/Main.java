@@ -4,17 +4,27 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfugue.midi.MidiFileManager;
+import org.jfugue.parser.Parser;
 import org.jfugue.pattern.Pattern;
+import org.jfugue.player.Player;
+import org.staccato.StaccatoParser;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException, InvalidMidiDataException {
+		
 		Pattern pattern = MidiFileManager.loadPatternFromMidi(chooseFile());
-		System.out.println(pattern);
+		
+		KeySignatureParserListener parserListener = new KeySignatureParserListener();
+		StaccatoParser parser = new StaccatoParser();
+		
+		parser.addParserListener(parserListener);
+		parser.parse(pattern);
 	}
 	
 	private static File chooseFile() {
