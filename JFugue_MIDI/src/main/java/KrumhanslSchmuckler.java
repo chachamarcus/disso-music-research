@@ -26,7 +26,7 @@ public class KrumhanslSchmuckler {
 			
 			if (maj > currentBestCorrelation) {
 				currentBestCorrelation = maj;
-				currentBestMatch = pitchClass + " Major";
+				currentBestMatch = pitchClass + "maj";
 			}
 				
 			
@@ -34,7 +34,7 @@ public class KrumhanslSchmuckler {
 			
 			if (min > currentBestCorrelation) {
 				currentBestCorrelation = min;
-				currentBestMatch = pitchClass + " Minor";
+				currentBestMatch = pitchClass + "min";
 			}
 				
 			pitchClassDurations = rotateSemitone(pitchClassDurations);

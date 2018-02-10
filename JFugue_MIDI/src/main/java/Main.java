@@ -12,7 +12,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfugue.midi.MidiFileManager;
 import org.jfugue.pattern.Pattern;
-import org.jfugue.pattern.Token;
 import org.staccato.StaccatoParser;
 
 public class Main {
@@ -51,13 +50,10 @@ public class Main {
 		if (commands.contains("rna")) {
 			ChordParserListener parserListener = new ChordParserListener(key);
 			StaccatoParser parser = new StaccatoParser();
-			
+
 			parser.addParserListener(parserListener);
 			parser.parse(pattern);
-			for (Token t: pattern.getTokens())
-				System.out.println(t.getType() + "-" + t);
 		}
-		
 		
 	}
 	
