@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.JFileChooser;
@@ -17,6 +18,7 @@ import org.staccato.StaccatoParser;
 public class Main {
 	
 	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna");
+	private static Logger log = Logger.getLogger(Main.class.getName());
 
 	public static void main(String[] args) throws IOException, InvalidMidiDataException {
 		
@@ -44,7 +46,7 @@ public class Main {
 			parser.addParserListener(parserListener);
 			parser.parse(pattern);
 			key = KrumhanslSchmuckler.calculateKey(parserListener.getFrequency());
-			System.out.println("Calculated key - " + key);
+			log.info("Calculated key - " + key);
 		}
 		
 		if (commands.contains("rna")) {
@@ -53,6 +55,8 @@ public class Main {
 
 			parser.addParserListener(parserListener);
 			parser.parse(pattern);
+			String rns = parserListener.getProgression();
+			log.info("Progression" + rns);
 		}
 		
 	}
