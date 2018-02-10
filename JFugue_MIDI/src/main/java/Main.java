@@ -4,27 +4,30 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfugue.midi.MidiFileManager;
-import org.jfugue.parser.Parser;
 import org.jfugue.pattern.Pattern;
-import org.jfugue.player.Player;
 import org.staccato.StaccatoParser;
 
-public class Main {
+public class Main { 
 
 	public static void main(String[] args) throws IOException, InvalidMidiDataException {
 		
-		Pattern pattern = MidiFileManager.loadPatternFromMidi(chooseFile());
+		File file = chooseFile();
+		if (file == null)
+			System.exit(0);
+		
+		Pattern pattern = MidiFileManager.loadPatternFromMidi(file);
 		
 		KeySignatureParserListener parserListener = new KeySignatureParserListener();
 		StaccatoParser parser = new StaccatoParser();
 		
 		parser.addParserListener(parserListener);
 		parser.parse(pattern);
+		String key = KrumhanslSchmuckler.calculateKey(parserListener.getFrequency());
+		System.out.println("Calculated key - " + key);
 	}
 	
 	private static File chooseFile() {
@@ -35,11 +38,13 @@ public class Main {
 	    chooser.setCurrentDirectory(new File("."));
 	    int returnVal = chooser.showOpenDialog(null);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	        System.out.println("opening: " +
-	                chooser.getSelectedFile().getName());
+	        return chooser.getSelectedFile();
 	    }
+	    else {
+			return null;
+		}
 	    
-	    return chooser.getSelectedFile();
+	    
 	}
 	
 }
