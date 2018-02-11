@@ -1,6 +1,7 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,11 +37,11 @@ public class ChordParserListener extends ParserListenerAdapter {
 		ROMAN_NUMERALS_MAJ.put(11, "vii" + "\u00b0");
 		ROMAN_NUMERALS_MIN.put(0, "i");
 		ROMAN_NUMERALS_MIN.put(2, "ii" + "\u00b0");
-		ROMAN_NUMERALS_MIN.put(3, "\u266D" + "III");
+		ROMAN_NUMERALS_MIN.put(3, "b" + "III");
 		ROMAN_NUMERALS_MIN.put(5, "iv");
 		ROMAN_NUMERALS_MIN.put(7, "v");
-		ROMAN_NUMERALS_MIN.put(8, "\u266D" + "VI");
-		ROMAN_NUMERALS_MIN.put(10, "\u266D" + "VII");
+		ROMAN_NUMERALS_MIN.put(8, "b" + "VI");
+		ROMAN_NUMERALS_MIN.put(10, "b" + "VII");
 	}
 	
 	@Override
@@ -50,23 +51,32 @@ public class ChordParserListener extends ParserListenerAdapter {
 			currentTime = timeBookmarkId;
 			Note hangover = currentChordNotes.get(currentChordNotes.size() - 1); //we have to take the last note in the chord out due to the way timestamps work
 			currentChordNotes.remove(hangover);
+			boolean match = false;
 			
-			int first = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(1));
-			int second = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(2));
-			
-			if (CHORD_QUALITIES.contains(new Pair<>(first, second))) {
-				int scaleDegreeInt = semitonesBetween(key.getRoot(), currentChordNotes.get(0));
+			for (int inv = 0; inv < 3; inv++) {
 				
-				if (key.getScale().getDisposition() == 1)
-					progressionString += " - " + ROMAN_NUMERALS_MAJ.get(scaleDegreeInt);
+				int first = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(1));
+				int second = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(2));
+				
+				if (CHORD_QUALITIES.contains(new Pair<>(first, second))) {
+					match = true;
+					int scaleDegreeInt = semitonesBetween(key.getRoot(), currentChordNotes.get(0));
+					
+					if (key.getScale().getDisposition() == 1)
+						progressionString += " - " + ROMAN_NUMERALS_MAJ.get(scaleDegreeInt);
+					else
+						progressionString += " - " + ROMAN_NUMERALS_MIN.get(scaleDegreeInt);
+					break;
+				}
 				else
-					progressionString += " - " + ROMAN_NUMERALS_MIN.get(scaleDegreeInt);
+				{
+					currentChordNotes.set(0, new Note(currentChordNotes.get(0).getValue() + 12));
+					Collections.rotate(currentChordNotes, -1);
+				}
 			}
-			else
-			{
-				progressionString += " - " + "skipped";
-				// rotate notes and try again (max twice)
-			}
+			
+			if (!match) 
+				progressionString += " - xxx";
 			
 			currentChordNotes.removeAll(currentChordNotes);
 			currentChordNotes.add(hangover);
@@ -82,8 +92,10 @@ public class ChordParserListener extends ParserListenerAdapter {
 	}
 	
 	private static int semitonesBetween(Note n, Note m) {
-		// assume m is higher than n
-		return (m.getValue() - n.getValue()) % 12;
+		if (m.getValue() > n.getValue()) {
+			return (m.getValue() - n.getValue()) % 12;
+		}
+		return (n.getValue() - m.getValue()) % 12;
 	}
 	
 	public String getProgression() {

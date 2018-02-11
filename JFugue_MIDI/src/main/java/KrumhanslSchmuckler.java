@@ -57,12 +57,36 @@ public class KrumhanslSchmuckler {
 		double[] pitchClassDurations = new double[pitchClasses.length];
 		int toneCount = 0;
 		
+		Map<String, Double> modFrequencies = new HashMap<>();
+		
+		for (String key : frequencies.keySet()) {
+			switch (key) {
+			case "Db" :
+				modFrequencies.put("C#", frequencies.get(key));
+				break;
+			case "Eb" :
+				modFrequencies.put("D#", frequencies.get(key));
+				break;
+			case "Gb" :
+				modFrequencies.put("F#", frequencies.get(key));
+				break;
+			case "Ab" :
+				modFrequencies.put("G#", frequencies.get(key));
+				break;
+			case "Bb" :
+				modFrequencies.put("A#", frequencies.get(key));
+				break;
+			default :
+				modFrequencies.put(key, frequencies.get(key));
+			}
+		}
+		
 		for (String pitch : pitchClasses) {
-			if (!frequencies.containsKey(pitch)) {
+			if (!modFrequencies.containsKey(pitch)) {
 				pitchClassDurations[toneCount] = 0.00; 
 			}
 			else {
-				pitchClassDurations[toneCount] = frequencies.get(pitch);
+				pitchClassDurations[toneCount] = modFrequencies.get(pitch);
 			}
 			toneCount++;
 		}
