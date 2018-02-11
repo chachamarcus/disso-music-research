@@ -17,7 +17,7 @@ import org.staccato.StaccatoParser;
 
 public class Main {
 	
-	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna");
+	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out");
 	private static Logger log = Logger.getLogger(Main.class.getName());
 
 	public static void main(String[] args) throws IOException, InvalidMidiDataException {
@@ -28,6 +28,7 @@ public class Main {
 			System.out.println("No Valid Commands Found.  Usage:");
 			System.out.println("key - find the key of a piece");
 			System.out.println("rna - get the roman numeral analysis of a piece");
+			System.out.println("out - read a file and then write it out again");
 			System.exit(0);
 		}
 		
@@ -38,6 +39,11 @@ public class Main {
 		Pattern pattern = MidiFileManager.loadPatternFromMidi(file);
 		
 		String key = "";
+		
+		if (commands.contains("out")) {
+			MidiFileManager.savePatternToMidi(pattern, new File(file.getParentFile(), "out-" + file.getName()));
+			log.info("saving " + file.getName() + "-out at " + file.getParentFile().getAbsolutePath());
+		}
 		
 		if (commands.contains("key") || commands.contains("rna")) {
 			KeySignatureParserListener parserListener = new KeySignatureParserListener();
