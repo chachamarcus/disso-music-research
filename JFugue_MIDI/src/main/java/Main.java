@@ -8,19 +8,24 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jfugue.devices.MusicTransmitterToParserListener;
+import org.jfugue.devtools.MidiDevicePrompt;
 import org.jfugue.midi.MidiFileManager;
 import org.jfugue.pattern.Pattern;
 import org.staccato.StaccatoParser;
 
 public class Main {
 	
-	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out");
+	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out", "rtc");
 	private static Logger log = Logger.getLogger(Main.class.getName());
 
-	public static void main(String[] args) throws IOException, InvalidMidiDataException {
+	public static void main(String[] args) throws IOException, InvalidMidiDataException, MidiUnavailableException {
 		
 		List<String> commands = Arrays.asList(args);
 		
@@ -29,6 +34,7 @@ public class Main {
 			System.out.println("key - find the key of a piece");
 			System.out.println("rna - get the roman numeral analysis of a piece");
 			System.out.println("out - read a file and then write it out again");
+			System.out.println("rtc - real time chord analysis");
 			System.exit(0);
 		}
 		
@@ -63,6 +69,12 @@ public class Main {
 			parser.parse(pattern);
 			String rns = parserListener.getProgression();
 			log.info("Progression" + rns);
+		}
+		
+		if (commands.contains("rtc")) {
+			MusicTransmitterToParserListener transmitter = new MusicTransmitterToParserListener(MidiDevicePrompt.askForMidiDevice());
+			ChordNameParserListener parserListener = new ChordNameParserListener();
+			transmitter.addParserListener(parserListener);
 		}
 		
 	}
