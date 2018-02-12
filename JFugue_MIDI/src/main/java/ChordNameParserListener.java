@@ -19,7 +19,6 @@ public class ChordNameParserListener extends ParserListenerAdapter {
 		if (currentNotesBeingPlayed.size() == 3) {
 			// pass list of chords to figure outerer
 			System.out.println("found chord" + currentNotesBeingPlayed);
-			
 		}
 	}
 	

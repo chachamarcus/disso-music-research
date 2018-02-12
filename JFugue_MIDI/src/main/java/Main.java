@@ -8,19 +8,17 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jfugue.devices.MusicTransmitterToParserListener;
 import org.jfugue.devtools.MidiDevicePrompt;
 import org.jfugue.midi.MidiFileManager;
-import org.jfugue.pattern.Pattern;import org.jfugue.theory.Chord;
+import org.jfugue.pattern.Pattern;
 import org.staccato.StaccatoParser;
 
-public class Main {
+public class Main { 
 	
 	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out", "rtc");
 	private static Logger log = Logger.getLogger(Main.class.getName());
@@ -42,13 +40,19 @@ public class Main {
 		if (file == null)
 			System.exit(0);
 		
+		long startTime = System.currentTimeMillis();
 		Pattern pattern = MidiFileManager.loadPatternFromMidi(file);
+		long loadTime = System.currentTimeMillis();
+		
+		log.info("loaded midi file in " + (loadTime - startTime) + "ms");
 		
 		String key = "";
 		
 		if (commands.contains("out")) {
 			MidiFileManager.savePatternToMidi(pattern, new File(file.getParentFile(), "out-" + file.getName()));
+			long saveTime = System.currentTimeMillis();
 			log.info("saving " + file.getName() + "-out at " + file.getParentFile().getAbsolutePath());
+			log.info("saving took " + (saveTime - loadTime) + "ms");
 		}
 		
 		if (commands.contains("key") || commands.contains("rna")) {
@@ -58,7 +62,8 @@ public class Main {
 			parser.addParserListener(parserListener);
 			parser.parse(pattern);
 			key = KrumhanslSchmuckler.calculateKey(parserListener.getFrequency());
-			log.info("Calculated key - " + key);
+			long keyTime = System.currentTimeMillis();
+			log.info("Calculated key - " + key + " in " + (keyTime - loadTime) + "ms");
 		}
 		
 		if (commands.contains("rna")) {
@@ -68,7 +73,8 @@ public class Main {
 			parser.addParserListener(parserListener);
 			parser.parse(pattern);
 			String rns = parserListener.getProgression();
-			log.info("Progression" + rns);
+			long rnaTime = System.currentTimeMillis();
+			log.info("Progression" + rns + " in " + (rnaTime - loadTime) + "ms");
 		}
 		
 		if (commands.contains("rtc")) {
@@ -77,10 +83,17 @@ public class Main {
 			transmitter.addParserListener(parserListener);
 			transmitter.startListening();
 			
-			// secret chord stops the program
-			if (parserListener.getChordNames().contains("Amin")) {
-				transmitter.stopListening();
+			while(!parserListener.getChordNames().contains("Amin")) {
+				
+				if (parserListener.getChordNames().contains("Cmaj")) {
+					System.out.println("you found the secret chord");
+				}
+				
 			}
+			
+			transmitter.stopListening();
+
+
 		}
 		
 	}
