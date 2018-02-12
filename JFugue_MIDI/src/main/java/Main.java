@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfugue.devices.MusicTransmitterToParserListener;
 import org.jfugue.devtools.MidiDevicePrompt;
 import org.jfugue.midi.MidiFileManager;
-import org.jfugue.pattern.Pattern;
+import org.jfugue.pattern.Pattern;import org.jfugue.theory.Chord;
 import org.staccato.StaccatoParser;
 
 public class Main {
@@ -75,6 +75,12 @@ public class Main {
 			MusicTransmitterToParserListener transmitter = new MusicTransmitterToParserListener(MidiDevicePrompt.askForMidiDevice());
 			ChordNameParserListener parserListener = new ChordNameParserListener();
 			transmitter.addParserListener(parserListener);
+			transmitter.startListening();
+			
+			// secret chord stops the program
+			if (parserListener.getChordNames().contains("Amin")) {
+				transmitter.stopListening();
+			}
 		}
 		
 	}
