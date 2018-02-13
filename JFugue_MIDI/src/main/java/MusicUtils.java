@@ -78,8 +78,7 @@ public class MusicUtils {
 				Collections.rotate(currentNotesBeingPlayed, -1);
 			}
 		}
-		
-		System.out.println("invalid chord - play a major, minor or diminished");
+
 		return null;
 	}
 	

@@ -16,19 +16,18 @@ public class ChordNameParserListener extends ParserListenerAdapter {
 	private List<Note> currentNotesBeingPlayed = new ArrayList<Note>();
 	private List<String> chords = new ArrayList<String>();
 	private static final Logger log = Logger.getLogger("Timings");
+	private static RealtimePlayer player;
+	
+	public ChordNameParserListener() throws MidiUnavailableException {
+		player = new RealtimePlayer();
+	}
 
 	@Override
 	public void onNotePressed(Note note) {
-		try {
-			RealtimePlayer player = new RealtimePlayer();
-			player.play(note);
-			log.info("note played at " + System.currentTimeMillis()/1000);
-		} catch (MidiUnavailableException e) {
-			e.printStackTrace();
-		}
+		player.startNote(note);;
+		log.info("note played at " + System.currentTimeMillis()/1000);
 		currentNotesBeingPlayed.add(note);
 		if (currentNotesBeingPlayed.size() == 3) {
-			
 			String lastChordPlayed = MusicUtils.findChord(currentNotesBeingPlayed);
 			chords.add(lastChordPlayed);
 		}
