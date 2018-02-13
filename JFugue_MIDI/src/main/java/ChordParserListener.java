@@ -2,10 +2,7 @@ package main.java;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.jfugue.parser.ParserListenerAdapter;
@@ -18,35 +15,17 @@ public class ChordParserListener extends ParserListenerAdapter {
 	private Key key;
 	private double currentTime = 0.00;
 	private List<Note> currentChordNotes = new ArrayList<>();
-	private static final Set<Pair<Integer, Integer>> CHORD_QUALITIES = new HashSet<>();
-	private static final HashMap<Integer, String> ROMAN_NUMERALS_MAJ = new HashMap<>();
-	private static final HashMap<Integer, String> ROMAN_NUMERALS_MIN = new HashMap<>();
+
 	private String progressionString = "";
 	
 	public ChordParserListener(String key) {
 		this.key = new Key(key);
-		CHORD_QUALITIES.add(new Pair<>(3,7));
-		CHORD_QUALITIES.add(new Pair<>(4,7));
-		CHORD_QUALITIES.add(new Pair<>(3,6));
-		ROMAN_NUMERALS_MAJ.put(0, "I");
-		ROMAN_NUMERALS_MAJ.put(2, "ii");
-		ROMAN_NUMERALS_MAJ.put(4, "iii");
-		ROMAN_NUMERALS_MAJ.put(5, "IV");
-		ROMAN_NUMERALS_MAJ.put(7, "V");
-		ROMAN_NUMERALS_MAJ.put(9, "vi");
-		ROMAN_NUMERALS_MAJ.put(11, "vii" + "\u00b0");
-		ROMAN_NUMERALS_MIN.put(0, "i");
-		ROMAN_NUMERALS_MIN.put(2, "ii" + "\u00b0");
-		ROMAN_NUMERALS_MIN.put(3, "b" + "III");
-		ROMAN_NUMERALS_MIN.put(5, "iv");
-		ROMAN_NUMERALS_MIN.put(7, "v");
-		ROMAN_NUMERALS_MIN.put(8, "b" + "VI");
-		ROMAN_NUMERALS_MIN.put(10, "b" + "VII");
+		
 	}
 	
 	@Override
 	public void onTrackBeatTimeRequested(double timeBookmarkId) {
-
+		
 		if (timeBookmarkId - currentTime == RHYTHM) {
 			currentTime = timeBookmarkId;
 			Note hangover = currentChordNotes.get(currentChordNotes.size() - 1); //we have to take the last note in the chord out due to the way timestamps work
@@ -55,17 +34,17 @@ public class ChordParserListener extends ParserListenerAdapter {
 			
 			for (int inv = 0; inv < 3; inv++) {
 				
-				int first = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(1));
-				int second = semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(2));
+				int first = MusicUtils.semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(1));
+				int second = MusicUtils.semitonesBetween(currentChordNotes.get(0), currentChordNotes.get(2));
 				
-				if (CHORD_QUALITIES.contains(new Pair<>(first, second))) {
+				if (MusicUtils.qualities().contains(new Pair<>(first, second))) {
 					match = true;
-					int scaleDegreeInt = semitonesBetween(key.getRoot(), currentChordNotes.get(0));
+					int scaleDegreeInt = MusicUtils.semitonesBetween(key.getRoot(), currentChordNotes.get(0));
 					
 					if (key.getScale().getDisposition() == 1)
-						progressionString += " - " + ROMAN_NUMERALS_MAJ.get(scaleDegreeInt);
+						progressionString += " - " + MusicUtils.majorNumerals().get(scaleDegreeInt);
 					else
-						progressionString += " - " + ROMAN_NUMERALS_MIN.get(scaleDegreeInt);
+						progressionString += " - " + MusicUtils.minorNumerals().get(scaleDegreeInt);
 					break;
 				}
 				else
@@ -90,13 +69,7 @@ public class ChordParserListener extends ParserListenerAdapter {
 			currentChordNotes.add(note);
 		}
 	}
-	
-	private static int semitonesBetween(Note n, Note m) {
-		if (m.getValue() > n.getValue()) {
-			return (m.getValue() - n.getValue()) % 12;
-		}
-		return (n.getValue() - m.getValue()) % 12;
-	}
+
 	
 	public String getProgression() {
 		return progressionString;
