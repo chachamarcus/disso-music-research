@@ -2,33 +2,48 @@ package main.java;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import javax.sound.midi.MidiUnavailableException;
 
 import org.jfugue.parser.ParserListenerAdapter;
+import org.jfugue.realtime.RealtimePlayer;
 import org.jfugue.theory.Note;
 
 
 public class ChordNameParserListener extends ParserListenerAdapter {
 	
-	private List<String> currentNotesBeingPlayed = new ArrayList<String>();
-	private List<String> chordNames = new ArrayList<String>();
+	private List<Note> currentNotesBeingPlayed = new ArrayList<Note>();
+	private List<String> chords = new ArrayList<String>();
+	private static final Logger log = Logger.getLogger("Timings");
 
 	@Override
 	public void onNotePressed(Note note) {
-		System.out.println(note + " pressed");
-		currentNotesBeingPlayed.add(note.getToneString());
-		if (currentNotesBeingPlayed.size() == 3) {
-			// pass list of notes to figure outerer
-			System.out.println("found chord" + currentNotesBeingPlayed);
+		try {
+			RealtimePlayer player = new RealtimePlayer();
+			player.play(note);
+			log.info("note played at " + System.currentTimeMillis()/1000);
+		} catch (MidiUnavailableException e) {
+			e.printStackTrace();
 		}
+		currentNotesBeingPlayed.add(note);
+		if (currentNotesBeingPlayed.size() == 3) {
+			
+			String lastChordPlayed = MusicUtils.findChord(currentNotesBeingPlayed);
+			chords.add(lastChordPlayed);
+		}
+			
 	}
 	
 	@Override
 	public void onNoteReleased(Note note) {
-		currentNotesBeingPlayed.remove(note.getToneString());
+		for (int i = 0; i < currentNotesBeingPlayed.size(); i++)
+			if (currentNotesBeingPlayed.get(i).getToneString().equals(note.getToneString())) 
+				currentNotesBeingPlayed.remove(i);
 	}
 	
-	public List<String> getChordNames() {
-		return chordNames;
+	public List<String> chords() {
+		return chords;
 	}
 	
 }

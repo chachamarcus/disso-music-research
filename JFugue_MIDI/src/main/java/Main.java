@@ -23,7 +23,7 @@ public class Main {
 	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out", "rtc");
 	private static Logger log = Logger.getLogger(Main.class.getName());
 
-	public static void main(String[] args) throws IOException, InvalidMidiDataException, MidiUnavailableException {
+	public static void main(String[] args) throws IOException, InvalidMidiDataException, MidiUnavailableException, InterruptedException {
 		
 		List<String> commands = Arrays.asList(args);
 		
@@ -89,17 +89,14 @@ public class Main {
 			transmitter.addParserListener(parserListener);
 			transmitter.startListening();
 			
-			while(!parserListener.getChordNames().contains("Amin")) {
-				
-				if (parserListener.getChordNames().contains("Cmaj")) {
-					System.out.println("you found the secret chord");
-				}
-				
+			while (true) {
+				Thread.sleep(100); // doesn't notice it straight away
+				if (parserListener.chords().contains("Amin")) {
+					break;
+				}	
 			}
 			
 			transmitter.stopListening();
-
-
 		}
 		
 	}
