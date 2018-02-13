@@ -9,23 +9,22 @@ import org.jfugue.theory.Note;
 
 public class ChordNameParserListener extends ParserListenerAdapter {
 	
-	private List<Note> currentNotesBeingPlayed = new ArrayList<Note>();
+	private List<String> currentNotesBeingPlayed = new ArrayList<String>();
 	private List<String> chordNames = new ArrayList<String>();
 
 	@Override
 	public void onNotePressed(Note note) {
 		System.out.println(note + " pressed");
-		currentNotesBeingPlayed.add(note);
+		currentNotesBeingPlayed.add(note.getToneString());
 		if (currentNotesBeingPlayed.size() == 3) {
-			// pass list of chords to figure outerer
+			// pass list of notes to figure outerer
 			System.out.println("found chord" + currentNotesBeingPlayed);
 		}
 	}
 	
 	@Override
 	public void onNoteReleased(Note note) {
-		System.out.println(note + " released");
-		currentNotesBeingPlayed.remove(note);
+		currentNotesBeingPlayed.remove(note.getToneString());
 	}
 	
 	public List<String> getChordNames() {

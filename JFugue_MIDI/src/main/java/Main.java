@@ -36,18 +36,24 @@ public class Main {
 			System.exit(0);
 		}
 		
-		File file = chooseFile();
-		if (file == null)
-			System.exit(0);
-		
-		long startTime = System.currentTimeMillis();
-		Pattern pattern = MidiFileManager.loadPatternFromMidi(file);
-		long loadTime = System.currentTimeMillis();
-		
-		log.info("loaded midi file in " + (loadTime - startTime) + "ms");
-		
+		Pattern pattern = null;
 		String key = "";
+		long startTime = 0;
+		long loadTime = 0;
+		File file = null;
 		
+		if (!(commands.size() == 1 && commands.contains("rtc"))) {
+			file = chooseFile();
+			if (file == null)
+				System.exit(0);
+			
+			startTime = System.currentTimeMillis();
+			pattern = MidiFileManager.loadPatternFromMidi(file);
+			loadTime = System.currentTimeMillis();
+			
+			log.info("loaded midi file in " + (loadTime - startTime) + "ms");
+		}
+
 		if (commands.contains("out")) {
 			MidiFileManager.savePatternToMidi(pattern, new File(file.getParentFile(), "out-" + file.getName()));
 			long saveTime = System.currentTimeMillis();
