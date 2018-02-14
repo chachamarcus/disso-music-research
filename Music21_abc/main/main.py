@@ -1,5 +1,5 @@
 import argparse
-from music21 import converter, analysis, stream
+from music21 import converter, analysis, stream, roman
 import tkinter as tk;
 from tkinter import filedialog
 import sys
@@ -7,7 +7,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-key', help='run Krumhansl algorithm on a music file', action="store_true")
-    parser.add_argument('-rna', help='run roman numeral analysis a music file', action="store_true")
+    parser.add_argument('-rna', help='run roman numeral analysis on a music file', action="store_true")
     args = parser.parse_args()
     
     root = tk.Tk()
@@ -20,10 +20,16 @@ def main():
         sys.stdout.write(str(key) + '\n')
     
     if args.rna:
+        delim = ""
         chordFilter = stream.filters.ClassFilter('Chord')
         sIter = score.recurse().iter
         sIter.addFilter(chordFilter)
+        
         for a in sIter:
-            sys.stdout.write(str(a) + '\n')
+            root = a.root()
+            rn = roman.romanNumeralFromChord(a,key)
+            sys.stdout.write(delim + str(rn.romanNumeralAlone))
+            delim = " - "
+            
     
 if __name__ == "__main__": main()
