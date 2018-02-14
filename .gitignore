@@ -3,3 +3,6 @@
 *.classpath
 *.project
 /.recommenders/
+
+.settings
+*.pydevproject
