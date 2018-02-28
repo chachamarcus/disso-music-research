@@ -1,5 +1,5 @@
 import argparse
-from music21 import converter, analysis, stream, roman, note;
+from music21 import converter, analysis, stream, roman, note, chord
 import pygame.midi
 from pygame import midi
 import tkinter as tk
@@ -38,16 +38,25 @@ def main():
     if args.rtc:
         midi.init()
         controller = midi.Input(pygame.midi.get_default_input_id())
-       
+        c = chord.Chord()
         while True:
             if (controller.poll()):
                 midi_event = controller.read(5)
                 notePitch = midi_event[0][0][1]
                 eventType = midi_event[0][0][0]
-                if notePitch > 0 and eventType == 144:
-                    n = note.Note(notePitch)
-                    print(n)
-                
-            
-        midi.quit()
+                n = note.Note(notePitch)
+                if eventType == 144:
+                    c.add(n)
+                    sys.stdout.write(str(n) + '\n')
+                    if c.isTriad():
+                        sys.stdout.write(c.pitchedCommonName + '\n')
+                    
+                if c.pitchedCommonName == 'A4-minor triad':
+                    break    
+                        
+                if eventType == 128:
+                    c.remove(n)
+                    c = chord.Chord(c)
+                            
+        
 if __name__ == "__main__": main()
