@@ -6,3 +6,6 @@
 
 .settings
 *.pydevproject
+*.abc
+*.mid
+*.xml

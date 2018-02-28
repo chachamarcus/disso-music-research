@@ -6,11 +6,13 @@ import tkinter as tk
 from tkinter import filedialog
 import sys
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-key', help='run Krumhansl algorithm on a music file', action="store_true")
     parser.add_argument('-rna', help='run roman numeral analysis on a music file', action="store_true")
     parser.add_argument('-rtc', help='run real-time chord naming', action="store_true")
+    parser.add_argument('-out', help='read a file and then write it out again', action="store_true")
     args = parser.parse_args()
     
     if not (args.rtc): 
@@ -34,6 +36,11 @@ def main():
             rn = roman.romanNumeralFromChord(a,key)
             sys.stdout.write(delim + str(rn.romanNumeralAlone))
             delim = " - "
+    
+    if args.out:
+        score.write('abc', 'abcout.abc')
+        score.write('midi', 'midiout.mid')
+        score.write('musicxml', 'xmlout.xml')
             
     if args.rtc:
         midi.init()
