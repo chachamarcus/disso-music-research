@@ -5,6 +5,7 @@ from pygame import midi
 import tkinter as tk
 from tkinter import filedialog
 import sys
+import time
 
 
 def main():
@@ -19,11 +20,15 @@ def main():
         root = tk.Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename()
+        start = int(time.time())
         score = converter.parse(file_path)
+        read = int(time.time())
+        sys.stdout.write('file read in ' + str(read - start) + 'ms\n')
 
     if args.key or args.rna:
         key = analysis.discrete.analyzeStream(score, 'Krumhansl')
-        sys.stdout.write(str(key) + '\n')
+        keyTime = int(time.time())
+        sys.stdout.write(str(key) + ' established in ' + str(keyTime - read) + 'ms\n')
     
     if args.rna:
         delim = ""
@@ -37,10 +42,15 @@ def main():
             sys.stdout.write(delim + str(rn.romanNumeralAlone))
             delim = " - "
     
+        rnaTime = int(time.time())
+        sys.stdout.write(' determined in ' + str(rnaTime - read) + 'ms\n')
+        
     if args.out:
         score.write('abc', 'abcout.abc')
         score.write('midi', 'midiout.mid')
         score.write('musicxml', 'xmlout.xml')
+        write = int(time.time())
+        sys.stdout.write('file written in ' + str(write - read) + 'ms\n')
             
     if args.rtc:
         midi.init()
