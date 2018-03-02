@@ -3,3 +3,9 @@
 *.classpath
 *.project
 /.recommenders/
+
+.settings
+*.pydevproject
+*.abc
+*.mid
+*.xml
