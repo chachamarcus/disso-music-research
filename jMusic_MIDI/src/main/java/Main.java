@@ -1,23 +1,31 @@
 package main.java;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jm.music.data.Note;
+import jm.music.data.Part;
+import jm.music.data.Phrase;
 import jm.music.data.Score;
 import jm.util.Read;
+import jm.util.Write;
 
 public class Main {
 
 	private static final List<String> VALID_COMMANDS = Arrays.asList("key", "rna", "out", "rtc");
 	private static Logger log = Logger.getLogger(Main.class.getName());
+	private static HashMap<String,Double> noteFrequency = new HashMap<String, Double>();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		
 		List<String> commands = Arrays.asList(args);
 
@@ -46,6 +54,26 @@ public class Main {
 			loadTime = System.currentTimeMillis();
 
 			log.info("loaded midi file in " + (loadTime - startTime) + "ms");
+		}
+		
+		if (commands.contains("out")) {
+			System.out.println(file.getParentFile() + "\\out-" + file.getName());
+			Write.midi(score,new FileOutputStream(file.getParentFile() + "\\out-" + file.getName()));
+			long saveTime = System.currentTimeMillis();
+			log.info("saving " + file.getName() + "-out at " + file.getParentFile().getAbsolutePath());
+			log.info("saving took " + (saveTime - loadTime) + "ms");
+		}
+		
+		if (commands.contains("key") || commands.contains("rna")) {
+			
+			for (Part p: score.getPartArray())
+				for (Phrase ph : p.getPhraseArray())
+					for (Note n: ph.getNoteArray())
+						noteFrequency.compute(n.getName(), (k, v) -> (v == null) ? n.getDuration() : v + n.getDuration());
+			
+			key = KrumhanslSchmuckler.calculateKey(noteFrequency);
+			long keyTime = System.currentTimeMillis();
+			log.info("Calculated key - " + key + " in " + (keyTime - loadTime) + "ms");
 		}
 	}
 	
