@@ -16,6 +16,7 @@ import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
+import jm.music.tools.ChordAnalysis;
 import jm.util.Read;
 import jm.util.Write;
 
@@ -74,6 +75,17 @@ public class Main {
 			key = KrumhanslSchmuckler.calculateKey(noteFrequency);
 			long keyTime = System.currentTimeMillis();
 			log.info("Calculated key - " + key + " in " + (keyTime - loadTime) + "ms");
+		}
+		
+		if (commands.contains("rna")) {
+			
+			Phrase phrase = score.getPart(0).getPhrase(0);
+			int tonic = MusicUtils.midiNumberFromNote(key);
+			int[] scale = MusicUtils.tonalityFromString(key);
+			int[] chords = ChordAnalysis.getSecondPassChords(phrase, 1.0, tonic, scale);
+			String rns = MusicUtils.intChordsToString(chords, key);
+			long rnaTime = System.currentTimeMillis();
+			log.info("Progression" + rns + " in " + (rnaTime - loadTime) + "ms");
 		}
 	}
 	
