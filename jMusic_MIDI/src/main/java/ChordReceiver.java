@@ -2,7 +2,6 @@ package main.java;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
@@ -15,7 +14,6 @@ public class ChordReceiver implements Receiver {
 	
 	private List<Note> currentNotesBeingPlayed = new ArrayList<>();
 	private List<String> chords = new ArrayList<String>();
-	private static final Logger log = Logger.getLogger("Timings");
 
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
@@ -37,10 +35,10 @@ public class ChordReceiver implements Receiver {
 			}
 		}
 		
-//		if (currentNotesBeingPlayed.size() == 3) {
-//			String lastChordPlayed = MusicUtils.findChord(currentNotesBeingPlayed);
-//			chords.add(lastChordPlayed);
-//		}
+		if (currentNotesBeingPlayed.size() == 3) {
+			String lastChordPlayed = MusicUtils.findChord(currentNotesBeingPlayed);
+			chords.add(lastChordPlayed);
+		}
 		
 	}
 

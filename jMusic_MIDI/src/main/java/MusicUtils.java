@@ -1,10 +1,25 @@
 package main.java;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
+
+import jm.music.data.Note;
 import jm.music.tools.PhraseAnalysis;
 
 public class MusicUtils {
+	
+	private static Set<Pair<Integer, Integer>> qualities() {
+		final Set<Pair<Integer, Integer>> CHORD_QUALITIES = new HashSet<>();
+		CHORD_QUALITIES.add(new Pair<>(3,7));
+		CHORD_QUALITIES.add(new Pair<>(4,7));
+		CHORD_QUALITIES.add(new Pair<>(3,6));
+		return CHORD_QUALITIES;
+	}
 	
 	private static HashMap<String, Integer> midiNumberFromNote() {
 		final HashMap<String, Integer> MIDI_NOTES = new HashMap<>();
@@ -75,42 +90,42 @@ public class MusicUtils {
 		return prog;
 	}
 	
-//	public static int semitonesBetween(Note n, Note m) {
-//		if (m.getValue() > n.getValue()) {
-//			return (m.getValue() - n.getValue()) % 12;
-//		}
-//		return (n.getValue() - m.getValue()) % 12;
-//	}
-//
-//	public static String findChord(List<Note> currentNotesBeingPlayed) {
-//		for (int inv = 0; inv < 3; inv++) {
-//			
-//			int first = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(1));
-//			int second = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(2));
-//			
-//			if (MusicUtils.qualities().contains(new Pair<>(first, second))) {
-//				if (first == 3 && second == 7) {
-//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "min");
-//					return currentNotesBeingPlayed.get(0).getToneString() + "min";
-//				}
-//				else if (first == 4 && second == 7) {
-//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "maj");
-//					return currentNotesBeingPlayed.get(0).getToneString() + "maj";
-//				}
-//				else {
-//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "dim");
-//					return currentNotesBeingPlayed.get(0).getToneString() + "dim";
-//				}
-//					
-//			}
-//			else
-//			{
-//				currentNotesBeingPlayed.set(0, new Note(currentNotesBeingPlayed.get(0).getValue() + 12));
-//				Collections.rotate(currentNotesBeingPlayed, -1);
-//			}
-//		}
-//
-//		return null;
-//	}
+	public static int semitonesBetween(Note n, Note m) {
+		if (m.getPitch() > n.getPitch()) {
+			return (m.getPitch() - n.getPitch()) % 12;
+		}
+		return (n.getPitch() - m.getPitch()) % 12;
+	}
+	
+	public static String findChord(List<Note> currentNotesBeingPlayed) {
+		for (int inv = 0; inv < 3; inv++) {
+			
+			int first = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(1));
+			int second = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(2));
+			
+			if (MusicUtils.qualities().contains(new Pair<>(first, second))) {
+				if (first == 3 && second == 7) {
+					System.out.println("found - " + currentNotesBeingPlayed.get(0).getName() + "min");
+					return currentNotesBeingPlayed.get(0).getName() + "min";
+				}
+				else if (first == 4 && second == 7) {
+					System.out.println("found - " + currentNotesBeingPlayed.get(0).getName() + "maj");
+					return currentNotesBeingPlayed.get(0).getName() + "maj";
+				}
+				else {
+					System.out.println("found - " + currentNotesBeingPlayed.get(0).getName() + "dim");
+					return currentNotesBeingPlayed.get(0).getName() + "dim";
+				}
+					
+			}
+			else
+			{
+				currentNotesBeingPlayed.set(0, new Note(currentNotesBeingPlayed.get(0).getPitch() + 12, 1));
+				Collections.rotate(currentNotesBeingPlayed, -1);
+			}
+		}
+
+		return null;
+	}
 	
 }
