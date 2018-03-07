@@ -92,7 +92,12 @@ public class Main {
 		
 		if (commands.contains("rtc")) {
 			ChordMidiCommunication midiController = new ChordMidiCommunication();
-			
+			while (true) {
+				if (midiController.chords().contains("Amin")) {
+					midiController.close();
+					System.exit(0);
+				}
+			}
 		}
 	}
 	
