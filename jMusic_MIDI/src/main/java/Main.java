@@ -91,8 +91,8 @@ public class Main {
 		}
 		
 		if (commands.contains("rtc")) {
-			MidiControllerChordListener chordListener = new MidiControllerChordListener();
-			chordListener.start();
+			ChordMidiCommunication midiController = new ChordMidiCommunication();
+			
 		}
 	}
 	
