@@ -10,14 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Track;
-import javax.sound.midi.Transmitter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -98,25 +91,8 @@ public class Main {
 		}
 		
 		if (commands.contains("rtc")) {
-			MidiDevice device = MidiSystem.getMidiDevice(MidiSystem.getMidiDeviceInfo()[1]);
-			Sequencer sequencer = MidiSystem.getSequencer();
-			Transmitter transmitter = device.getTransmitter();
-			Receiver receiver = sequencer.getReceiver();
-			Sequence sequence = new Sequence(Sequence.PPQ, 24);
-			Track track = sequence.createTrack();
-			device.open();
-			sequencer.open();
-			transmitter.setReceiver(receiver);
-			sequencer.setSequence(sequence);
-			sequencer.setTickPosition(0);
-			sequencer.recordEnable(track, -1);
-			sequencer.startRecording();
-//			System.out.println("recording");
-//			Thread.sleep(5000);
-//			sequencer.stopRecording();
-//			System.out.println("stop recording");
-//			Sequence tmp = sequencer.getSequence();
-//			MidiSystem.write(tmp, 0, new File("MyMidiFile.mid"));
+			MidiControllerChordListener chordListener = new MidiControllerChordListener();
+			chordListener.start();
 		}
 	}
 	

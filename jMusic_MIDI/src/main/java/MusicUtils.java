@@ -75,4 +75,42 @@ public class MusicUtils {
 		return prog;
 	}
 	
+//	public static int semitonesBetween(Note n, Note m) {
+//		if (m.getValue() > n.getValue()) {
+//			return (m.getValue() - n.getValue()) % 12;
+//		}
+//		return (n.getValue() - m.getValue()) % 12;
+//	}
+//
+//	public static String findChord(List<Note> currentNotesBeingPlayed) {
+//		for (int inv = 0; inv < 3; inv++) {
+//			
+//			int first = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(1));
+//			int second = MusicUtils.semitonesBetween(currentNotesBeingPlayed.get(0), currentNotesBeingPlayed.get(2));
+//			
+//			if (MusicUtils.qualities().contains(new Pair<>(first, second))) {
+//				if (first == 3 && second == 7) {
+//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "min");
+//					return currentNotesBeingPlayed.get(0).getToneString() + "min";
+//				}
+//				else if (first == 4 && second == 7) {
+//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "maj");
+//					return currentNotesBeingPlayed.get(0).getToneString() + "maj";
+//				}
+//				else {
+//					System.out.println("found - " + currentNotesBeingPlayed.get(0).getToneString() + "dim");
+//					return currentNotesBeingPlayed.get(0).getToneString() + "dim";
+//				}
+//					
+//			}
+//			else
+//			{
+//				currentNotesBeingPlayed.set(0, new Note(currentNotesBeingPlayed.get(0).getValue() + 12));
+//				Collections.rotate(currentNotesBeingPlayed, -1);
+//			}
+//		}
+//
+//		return null;
+//	}
+	
 }
