@@ -26,10 +26,15 @@ public class ChordParserListener extends ParserListenerAdapter {
 	@Override
 	public void onTrackBeatTimeRequested(double timeBookmarkId) {
 		
-		if (timeBookmarkId - currentTime == RHYTHM) {
+		if (timeBookmarkId - currentTime == RHYTHM || timeBookmarkId == Double.NEGATIVE_INFINITY) {
 			currentTime = timeBookmarkId;
-			Note hangover = currentChordNotes.get(currentChordNotes.size() - 1); //we have to take the last note in the chord out due to the way timestamps work
-			currentChordNotes.remove(hangover);
+			Note hangover = null;
+			
+			if (timeBookmarkId != Double.NEGATIVE_INFINITY) {
+				hangover = currentChordNotes.get(currentChordNotes.size() - 1); //we have to take the last note in the chord out due to the way timestamps work
+				currentChordNotes.remove(hangover);
+			}
+				
 			boolean match = false;
 			
 			for (int inv = 0; inv < 3; inv++) {
@@ -58,9 +63,16 @@ public class ChordParserListener extends ParserListenerAdapter {
 				progressionString += " - xxx";
 			
 			currentChordNotes.removeAll(currentChordNotes);
-			currentChordNotes.add(hangover);
+			
+			if (timeBookmarkId != Double.NEGATIVE_INFINITY)
+				currentChordNotes.add(hangover);
 		}
 		
+	}
+	
+	@Override
+	public void afterParsingFinished() {
+		onTrackBeatTimeRequested(Double.NEGATIVE_INFINITY);
 	}
 	
 	@Override
