@@ -20,14 +20,14 @@ def main():
         root = tk.Tk()
         root.withdraw()
         file_path = filedialog.askopenfilename()
-        start = int(time.time())
+        start = int(round(time.time() * 1000))
         score = converter.parse(file_path)
-        read = int(time.time())
+        read = int(round(time.time() * 1000))
         sys.stdout.write('file read in ' + str(read - start) + 'ms\n')
 
     if args.key or args.rna:
         key = analysis.discrete.analyzeStream(score, 'Krumhansl')
-        keyTime = int(time.time())
+        keyTime = int(round(time.time() * 1000))
         sys.stdout.write(str(key) + ' established in ' + str(keyTime - read) + 'ms\n')
     
     if args.rna:
@@ -42,14 +42,14 @@ def main():
             sys.stdout.write(delim + str(rn.romanNumeralAlone))
             delim = " - "
     
-        rnaTime = int(time.time())
+        rnaTime = int(round(time.time() * 1000))
         sys.stdout.write(' determined in ' + str(rnaTime - read) + 'ms\n')
         
     if args.out:
         score.write('abc', 'abcout.abc')
         score.write('midi', 'midiout.mid')
         score.write('musicxml', 'xmlout.xml')
-        write = int(time.time())
+        write = int(round(time.time() * 1000))
         sys.stdout.write('file written in ' + str(write - read) + 'ms\n')
             
     if args.rtc:
